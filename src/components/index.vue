@@ -127,7 +127,7 @@
 				activeIndex: "",
 				activeIndex1: "",
 				swiperOption: {
-					autoplay: 100,
+					autoplay: 1000,
 					effect: 'fade',
 					//					loop: true,
 					/*			prevButton: '.prev',
@@ -144,7 +144,7 @@
 					}
 				},
 				swiperOption1: {
-					autoplay: 100,
+					autoplay: 1000,
 					effect: 'fade',
 					//					loop: true,
 					/*			prevButton: '.prev',

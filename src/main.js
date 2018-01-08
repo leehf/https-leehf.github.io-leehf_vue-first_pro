@@ -10,7 +10,7 @@ Vue.config.productionTip = false
 
 router.afterEach((to, from, next) => {
 	window.scrollTo(0, 0);
-});//切换路由时，滚动条都初始化为顶部
+}); //切换路由时，滚动条都初始化为顶部
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',
