@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<pageList :url="url" :pageCount="pageCount" :pageCurr="pageCurr" :pageListNum="pageListNum" v-on:listenToChildEvent="receiveMsgFormChild"></pageList>
+		<pageList :url="url" :pageCount="pageCount" :pageCurr="pageCurr" :pageListNum="pageListNum" v-on:listenToChildEvent="receiveMsgFormPageList"></pageList>
 	</div>
 </template>
 
@@ -12,19 +12,21 @@
 		components: {
 			pageList
 		},
-		data() {
+		data() { 
 			return {
-				url: "./page.json",//翻页请求的URL
-				pageCount: 3,//总数据
-				pageCurr: 2,//当前数据
-				pageListNum:3//显示的翻页的条数，默认设为3条
+				url: "http://localhost:8080/static/page.json#/", //翻页请求的URL
+				pageCount: 3, //总数据
+				pageCurr: 2, //当前数据
+				pageListNum: 3 //显示的翻页的条数，默认设为3条
 			}
 		},
 		methods: {
-			receiveMsgFormChild(data) { //子组件传至父组件
-				/*debugger*/
+			receiveMsgFormPageList(data) { //子组件传至父组件
 				console.log(data);
 				/*获取子组件请求得到的数据*/
+			/*	this.pageCount = data.pageCount; 
+				this.pageCurr = data.pageCurr;*/
+
 			}
 		}
 	}

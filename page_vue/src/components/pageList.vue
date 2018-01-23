@@ -10,7 +10,8 @@
 			<li class="fl sl" v-show="nextSl">...</li>
 			<li class="fl" v-show="pageCurr !== pageCount" v-if="nextButton" @click="sendMsgToParent(pageCurr+1)">下一页</li>
 			<li class="fl" v-show="pageCurr !== pageCount" v-if="nextButton" @click="sendMsgToParent(pageCount)">尾页</li>
-
+			<a class="fl noBoder" @click="sendMsgToParent(inputNum)" href="javascript:" v-show="pageCurr !==1">跳转</a>
+			<input type="text" @keyup="limitInput()" v-model="inputNum" />
 		</ul>
 	</div>
 </template>
@@ -56,11 +57,12 @@
 			return {
 				prevSl: true,
 				nextSl: true,
+				inputNum: ""
 			}
 		},
 		mounted() {},
 		computed: {
-			pageListNum1() {//判断每页显示的页码个数，如为偶数则相应转换为该偶数-1的页码数
+			pageListNum1() { //判断每页显示的页码个数，如为偶数则相应转换为该偶数-1的页码数
 				if(this.pageListNum % 2 !== 1) {
 					this.pageListNum = this.pageListNum - 1;
 				}
@@ -113,21 +115,31 @@
 		},
 		methods: {
 			sortNumber(a, b) {
-				return a - b;//排序判断
+				return a - b; //排序判断
 			},
-			sendMsgToParent(num) {//数据请求并将数据返回父组件
+			sendMsgToParent(num) { //数据请求并将数据返回父组件
+				debugger;
 				let that = this;
-				axios.post(this.url, num).then(function(res) {
+				axios.get(this.url, parseInt(num)).then(function(res) {
 					console.log(res);
 					if(res.data.statusCode == 200) {
-						this.pageCurr = res.data.pageCurr;
-						this.$emit("listenToChildEvent", res);
+						//在组件中 直接修改请求回来的当前页和总页码,也可以将页码返回至父组件中去修改
+						that.pageCount = res.data.pageCount;
+						that.pageCurr = res.data.pageCurr;
+						that.$emit("listenToChildEvent", res.data); //该条语句是向父组件通信传值
 					}
-
 				})
 				//该条语句是向父组件通信传值
 				//this.$emit("listenToChildEvent", num);
-
+			},
+			limitInput() {
+				/*限制输入框的数据在首页和总页码之间*/
+				let min = 1;
+				let n = this.inputNum;
+				if(parseInt(n) < min || parseInt(n) > this.pageCount) {
+					alert('输入错误');
+					this.inputNum = null;
+				}
 			}
 		}
 
@@ -151,6 +163,39 @@
 			display: table;
 			clear: both;
 		}
+	}
+	
+	a {
+		text-decoration: none;
+		color: inherit;
+		display: inline-block;
+		line-height: 26px;
+		font-size: 14px;
+		margin: 0 10px;
+		&:hover {
+			color: #5a98de;
+		}
+	}
+	
+	.noBoder {
+		display: inline;
+		border: none;
+	}
+	
+	input {
+		box-sizing: border-box;
+		border: solid 1px #ddd;
+		width: 100%;
+		-webkit-transition: all .2s linear 0s;
+		-moz-transition: all .2s linear 0s;
+		-o-transition: all .2s linear 0s;
+		transition: all .2s linear 0s;
+		font-size: 12px;
+		height: 23px;
+		padding: 1px 2px;
+		line-height: 1.42857;
+		width: 40px;
+		height: 26px;
 	}
 	
 	$float-data: (fl, left),
