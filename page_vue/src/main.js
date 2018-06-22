@@ -16,3 +16,4 @@ new Vue({
 		App
 	}
 })
+router.push('index');

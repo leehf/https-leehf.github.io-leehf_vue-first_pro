@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="clearfix">
 		<ul class="clearfix fr">
 			<li class="fl" v-show="pageCurr !==1" @click="sendMsgToParent(1)" v-if="firstButton">首页</li>
 			<li class="fl" v-show="pageCurr !==1" v-if="prevButton" @click="sendMsgToParent(pageCurr-1)">上一页</li>
@@ -10,8 +10,8 @@
 			<li class="fl sl" v-show="nextSl">...</li>
 			<li class="fl" v-show="pageCurr !== pageCount" v-if="nextButton" @click="sendMsgToParent(pageCurr+1)">下一页</li>
 			<li class="fl" v-show="pageCurr !== pageCount" v-if="nextButton" @click="sendMsgToParent(pageCount)">尾页</li>
-			<a class="fl noBoder" @click="sendMsgToParent(inputNum)" href="javascript:" v-show="pageCurr !==1">跳转</a>
-			<input type="text" @keyup="limitInput()" v-model="inputNum" />
+			<a class="fl noBoder" @click="sendMsgToParent(inputNum)" href="javascript:">跳转</a>
+			<input type="text" @input="sendMsgToParent(inputNum)" @keyup="limitInput()" v-model="inputNum" />
 		</ul>
 	</div>
 </template>
@@ -48,7 +48,7 @@
 				type: Boolean,
 				default: true
 			},
-			"pageListNum": {
+			"pageListNum": { //显示的翻页的页码个数，默认为3个
 				type: Number,
 				default: 3
 			}
@@ -75,41 +75,28 @@
 						list.push(i);
 					}
 				} else {
-					/*if(this.pageCurr == 1 || this.pageCurr == 2 || this.pageCurr == this.pageCount || this.pageCurr == this.pageCount - 1) {
-						var i, length;
-
-						if(this.pageCurr == this.pageCount) {
-							for(i = this.pageListNum - 1; i > -1; i--) {
-								list.push(this.pageCount - i);
-							}
-						} else if(this.pageCurr == this.pageCount - 1) {
-							i = -3;
-							length = this.pageListNum - 3
-							for(i; i < length; i++) {
-								list.push(this.pageCurr + i);
-							}
-						} else {
-							this.pageCurr == 1 ? i = 0 : i = -1;
-							this.pageCurr == 1 ? length = this.pageListNum : length = this.pageListNum - 1;
-							for(i; i < length; i++) {
-								list.push(this.pageCurr + i);
-							}
+					if(this.pageCurr == 1) {
+						for(var i = 1; i <= this.pageListNum; i++) {
+							list.push(i);
 						}
-					} else {*/
-					for(var i = (-(this.pageListNum - 1) / 2); i <= (this.pageListNum - 1) / 2; i++) {
-						if(this.pageCurr + i <= 0) {
-							list.push(this.pageCurr + (this.pageListNum - 1) / 2 - i);
-						} else if(this.pageCurr + i > this.pageCount) {
-							list.push(this.pageCount - (this.pageListNum - 1) / 2 - i);
-						} else {
-							list.push(this.pageCurr + i);
+					} else {
+						for(var i = (-(this.pageListNum - 1) / 2); i <= (this.pageListNum - 1) / 2; i++) {
+							if(this.pageCurr + i < 0) {
+								list.push(this.pageCurr + (this.pageListNum - 1) / 2 - i);
+							} else if(this.pageCurr + i > this.pageCount) {
+								list.push(this.pageCount - (this.pageListNum - 1) / 2 - i);
+							} else if(this.pageCurr + i == 0) {
+								list.push(this.pageListNum);
+							} else {
+								list.push(this.pageCurr + i);
+							}
 						}
 					}
-					//	}
 				}
 				list.sort(this.sortNumber);
-				list[0] == 1 && (this.prevSl = false);
-				list[list.length - 1] == this.pageCount && (this.nextSl = false);
+				//				debugger
+				list[0] == 1 ? (this.prevSl = false) : (this.prevSl = true);
+				list[list.length - 1] == this.pageCount ? (this.nextSl = false) : (this.nextSl = true);
 				return list;
 			}
 		},
@@ -118,14 +105,15 @@
 				return a - b; //排序判断
 			},
 			sendMsgToParent(num) { //数据请求并将数据返回父组件
-				debugger;
+				//				debugger;
+				(typeof(num) == "undefined" || num == "") && (num = this.pageCurr)
 				let that = this;
 				axios.get(this.url, parseInt(num)).then(function(res) {
 					console.log(res);
 					if(res.data.statusCode == 200) {
 						//在组件中 直接修改请求回来的当前页和总页码,也可以将页码返回至父组件中去修改
-						that.pageCount = res.data.pageCount;
-						that.pageCurr = res.data.pageCurr;
+						//						that.pageCount = res.data.pageCount;
+						that.pageCurr = parseInt(num);
 						that.$emit("listenToChildEvent", res.data); //该条语句是向父组件通信传值
 					}
 				})
@@ -135,10 +123,11 @@
 			limitInput() {
 				/*限制输入框的数据在首页和总页码之间*/
 				let min = 1;
-				let n = this.inputNum;
+				let n = parseInt(this.inputNum);
 				if(parseInt(n) < min || parseInt(n) > this.pageCount) {
 					alert('输入错误');
-					this.inputNum = null;
+					debugger
+					this.inputNum = " ";
 				}
 			}
 		}

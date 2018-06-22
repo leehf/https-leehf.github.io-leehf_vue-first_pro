@@ -10,8 +10,9 @@
   *	lastButton：尾页按钮，Boolean值，默认true；
   * prevButton：上一页按钮，Boolean值，默认true;
   * nextButton：下一页按钮，Boolean值，默认true;
-  * pageListNum:显示的页码个数，默认是3个
- * */
+  * pageListNum:显示的页码个数，默认是3个;
+  * inputNum：输入框中可输入的页码，从1到尾页；
+ * */ 
 
 ## Build Setup
 
@@ -29,3 +30,5 @@ npm run build
 npm run build --report
 
 目前只是单纯的写了下，还没有完全完整，只是项目中曾经用jquery实现过，现在使用vue实践一遍！ 
+
+父子组件之间相互传递数据
